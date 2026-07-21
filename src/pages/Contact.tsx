@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, FormEvent } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import type { FormEvent } from 'react'
 import '../styles/components.css'
 
 const WHATSAPP_NUMBER = '27000000000'
@@ -49,7 +50,15 @@ export default function Contact() {
     setSending(true)
     // Build WhatsApp message with form data
     const msg = encodeURIComponent(
-      `Hi Meem Curtain! 👋\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nCategory: ${formData.category}\n\nMessage:\n${formData.message}`
+      `Hi Meem Curtain! 👋
+
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Category: ${formData.category}
+
+Message:
+${formData.message}`
     )
     setTimeout(() => {
       setSending(false)
