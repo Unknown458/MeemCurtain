@@ -1,0 +1,14 @@
+/* App.css — reset & import component styles */
+@import './styles/Navbar.css';
+@import './styles/components.css';
+
+/* Remove Vite defaults */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
