@@ -11,40 +11,40 @@ const categories = [
     slug: 'lounge',
     label: 'Our Collection',
     title: 'Lounge Curtain',
-    image: '/images/lounge.png',
+    image: import.meta.env.BASE_URL + 'images/lounge.png',
     featured: true,
   },
   {
     slug: 'bedroom',
     label: 'Collection',
     title: 'Bed Room Curtain',
-    image: '/images/bedroom.png',
+    image: import.meta.env.BASE_URL + 'images/bedroom.png',
   },
   {
     slug: 'dining',
     label: 'Collection',
     title: 'Dining Room',
-    image: '/images/dining.png',
+    image: import.meta.env.BASE_URL + 'images/dining.png',
   },
   {
     slug: 'kitchen',
     label: 'Collection',
     title: 'Kitchen',
-    image: '/images/kitchen.png',
+    image: import.meta.env.BASE_URL + 'images/kitchen.png',
   },
   {
     slug: 'studio',
     label: 'Collection',
     title: 'Studio',
-    image: '/images/studio.png',
+    image: import.meta.env.BASE_URL + 'images/studio.png',
   },
 ]
 
 const recentWork = [
-  { id: 1, title: 'Modern Lounge', cat: 'Lounge', img: '/images/lounge.png' },
-  { id: 2, title: 'Master Bedroom', cat: 'Bedroom', img: '/images/bedroom.png' },
-  { id: 3, title: 'Elegant Dining', cat: 'Dining', img: '/images/dining.png' },
-  { id: 4, title: 'Studio Setup', cat: 'Studio', img: '/images/studio.png' },
+  { id: 1, title: 'Modern Lounge', cat: 'Lounge', img: import.meta.env.BASE_URL + 'images/lounge.png' },
+  { id: 2, title: 'Master Bedroom', cat: 'Bedroom', img: import.meta.env.BASE_URL + 'images/bedroom.png' },
+  { id: 3, title: 'Elegant Dining', cat: 'Dining', img: import.meta.env.BASE_URL + 'images/dining.png' },
+  { id: 4, title: 'Studio Setup', cat: 'Studio', img: import.meta.env.BASE_URL + 'images/studio.png' },
 ]
 
 const features = [
@@ -180,7 +180,7 @@ function Categories() {
 
           {/* Other 4 cards */}
           {rest.map((cat, i) => (
-            <Link to={`/gallery?cat=${cat.slug}`}
+            <Link to={`/meemcurtain/gallery?cat=${cat.slug}`}
               key={cat.slug}
               className={`category-card fade-up delay-${i + 2}`}>
               <img src={cat.image} alt={cat.title} loading="lazy" />
@@ -207,9 +207,9 @@ function About() {
         <div className="about-grid">
           {/* Image side */}
           <div className="about-image-wrapper fade-left">
-            <img src="/images/lounge.png" alt="Meem Curtain showroom"
+            <img src={import.meta.env.BASE_URL + 'images/lounge.png'} alt="Meem Curtain showroom"
               className="about-image-main" />
-            <img src="/images/bedroom.png" alt="Bedroom curtain detail"
+            <img src={import.meta.env.BASE_URL + 'images/bedroom.png'} alt="Bedroom curtain detail"
               className="about-image-accent" />
             <div className="about-badge">
               <span className="about-badge-number">5+</span>
@@ -274,7 +274,7 @@ function RecentWork() {
 
         <div className="recent-work-grid">
           {recentWork.map((item, i) => (
-            <Link to={`/gallery?cat=${item.cat.toLowerCase()}`}
+            <Link to={`/meemcurtain/gallery?cat=${item.cat.toLowerCase()}`}
               key={item.id}
               className={`work-card fade-up delay-${i + 1}`}
               id={`work-card-${item.id}`}>

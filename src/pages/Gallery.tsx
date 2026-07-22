@@ -19,25 +19,25 @@ function useSectionAnimation() {
 // ─── All gallery items ────────────────────────────────────────────────────
 const allItems = [
   // Lounge
-  { id: 1,  cat: 'lounge',   title: 'Classic Lounge Drape',      img: '/images/lounge.png'   },
-  { id: 2,  cat: 'lounge',   title: 'Sheer Lounge Panel',        img: '/images/lounge.png'   },
-  { id: 3,  cat: 'lounge',   title: 'Velvet Lounge Curtain',     img: '/images/lounge.png'   },
+  { id: 1,  cat: 'lounge',   title: 'Classic Lounge Drape',      img: import.meta.env.BASE_URL + 'images/lounge.png'   },
+  { id: 2,  cat: 'lounge',   title: 'Sheer Lounge Panel',        img: import.meta.env.BASE_URL + 'images/lounge.png'   },
+  { id: 3,  cat: 'lounge',   title: 'Velvet Lounge Curtain',     img: import.meta.env.BASE_URL + 'images/lounge.png'   },
   // Bedroom
-  { id: 4,  cat: 'bedroom',  title: 'Golden Bedroom Sheer',      img: '/images/bedroom.png'  },
-  { id: 5,  cat: 'bedroom',  title: 'Blackout Bedroom Panel',    img: '/images/bedroom.png'  },
-  { id: 6,  cat: 'bedroom',  title: 'Linen Master Bedroom',      img: '/images/bedroom.png'  },
+  { id: 4,  cat: 'bedroom',  title: 'Golden Bedroom Sheer',      img: import.meta.env.BASE_URL + 'images/bedroom.png'  },
+  { id: 5,  cat: 'bedroom',  title: 'Blackout Bedroom Panel',    img: import.meta.env.BASE_URL + 'images/bedroom.png'  },
+  { id: 6,  cat: 'bedroom',  title: 'Linen Master Bedroom',      img: import.meta.env.BASE_URL + 'images/bedroom.png'  },
   // Dining
-  { id: 7,  cat: 'dining',   title: 'Elegant Dining Room',       img: '/images/dining.png'   },
-  { id: 8,  cat: 'dining',   title: 'Formal Dining Drape',       img: '/images/dining.png'   },
-  { id: 9,  cat: 'dining',   title: 'Dining Room Sheer',         img: '/images/dining.png'   },
+  { id: 7,  cat: 'dining',   title: 'Elegant Dining Room',       img: import.meta.env.BASE_URL + 'images/dining.png'   },
+  { id: 8,  cat: 'dining',   title: 'Formal Dining Drape',       img: import.meta.env.BASE_URL + 'images/dining.png'   },
+  { id: 9,  cat: 'dining',   title: 'Dining Room Sheer',         img: import.meta.env.BASE_URL + 'images/dining.png'   },
   // Kitchen
-  { id: 10, cat: 'kitchen',  title: 'Café Kitchen Curtain',      img: '/images/kitchen.png'  },
-  { id: 11, cat: 'kitchen',  title: 'Farmhouse Kitchen Panel',   img: '/images/kitchen.png'  },
-  { id: 12, cat: 'kitchen',  title: 'Linen Kitchen Tier',        img: '/images/kitchen.png'  },
+  { id: 10, cat: 'kitchen',  title: 'Café Kitchen Curtain',      img: import.meta.env.BASE_URL + 'images/kitchen.png'  },
+  { id: 11, cat: 'kitchen',  title: 'Farmhouse Kitchen Panel',   img: import.meta.env.BASE_URL + 'images/kitchen.png'  },
+  { id: 12, cat: 'kitchen',  title: 'Linen Kitchen Tier',        img: import.meta.env.BASE_URL + 'images/kitchen.png'  },
   // Studio
-  { id: 13, cat: 'studio',   title: 'Studio Blackout Panel',     img: '/images/studio.png'   },
-  { id: 14, cat: 'studio',   title: 'Creative Studio Drape',     img: '/images/studio.png'   },
-  { id: 15, cat: 'studio',   title: 'Minimal Studio Curtain',    img: '/images/studio.png'   },
+  { id: 13, cat: 'studio',   title: 'Studio Blackout Panel',     img: import.meta.env.BASE_URL + 'images/studio.png'   },
+  { id: 14, cat: 'studio',   title: 'Creative Studio Drape',     img: import.meta.env.BASE_URL + 'images/studio.png'   },
+  { id: 15, cat: 'studio',   title: 'Minimal Studio Curtain',    img: import.meta.env.BASE_URL + 'images/studio.png'   },
 ]
 
 const filters = [
