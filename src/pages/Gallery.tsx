@@ -2,20 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import '../styles/components.css'
 
-function useSectionAnimation() {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('visible') }),
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
-    )
-    const el = ref.current
-    if (el) el.querySelectorAll('.fade-up,.fade-left,.fade-right').forEach((n) => observer.observe(n))
-    return () => observer.disconnect()
-  }, [])
-  return ref
-}
-
 // ─── All gallery items ────────────────────────────────────────────────────
 const allItems = [
   // Lounge
@@ -51,7 +37,7 @@ const filters = [
 
 export default function Gallery() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const ref = useSectionAnimation()
+  const ref = useRef<HTMLDivElement>(null)
 
   const catParam = searchParams.get('cat') ?? 'all'
   const [active, setActive] = useState(catParam)
@@ -78,6 +64,30 @@ export default function Gallery() {
     window.scrollTo(0, 0)
     document.title = 'Gallery – Meem Curtain'
   }, [])
+
+  // Re-run observer every time the displayed list changes so newly rendered
+  // .fade-up cards are always picked up and made visible.
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add('visible')
+        }),
+      { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+    )
+
+    // Observe all animatable children
+    el.querySelectorAll('.fade-up,.fade-left,.fade-right').forEach((n) => {
+      // Reset so animation replays on filter switch
+      n.classList.remove('visible')
+      observer.observe(n)
+    })
+
+    return () => observer.disconnect()
+  }, [displayed])
 
   return (
     <main className="page-enter">
