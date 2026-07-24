@@ -1,35 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import '../styles/components.css'
-
-// ─── All gallery items ────────────────────────────────────────────────────
-const allItems = [
-  // Lounge
-  { id: 1,  cat: 'lounge',   title: 'Classic Lounge Drape',      img: import.meta.env.BASE_URL + 'images/lounge.png'    },
-  { id: 2,  cat: 'lounge',   title: 'Emerald Velvet Drape',      img: import.meta.env.BASE_URL + 'images/lounge_2.png'  },
-  { id: 3,  cat: 'lounge',   title: 'Ivory & Terracotta Panel',  img: import.meta.env.BASE_URL + 'images/lounge_3.png'  },
-  // Bedroom
-  { id: 4,  cat: 'bedroom',  title: 'Golden Bedroom Sheer',      img: import.meta.env.BASE_URL + 'images/bedroom.png'   },
-  { id: 5,  cat: 'bedroom',  title: 'Royal Blue Blackout',       img: import.meta.env.BASE_URL + 'images/bedroom_2.png' },
-  { id: 6,  cat: 'bedroom',  title: 'Sage Green Linen Panel',    img: import.meta.env.BASE_URL + 'images/bedroom_3.png' },
-  // Dining
-  { id: 7,  cat: 'dining',   title: 'Elegant Dining Room',       img: import.meta.env.BASE_URL + 'images/dining.png'    },
-  { id: 8,  cat: 'dining',   title: 'Burgundy Velvet Drape',     img: import.meta.env.BASE_URL + 'images/dining_2.png'  },
-  { id: 9,  cat: 'dining',   title: 'Sheer Scandinavian Panel',  img: import.meta.env.BASE_URL + 'images/dining_3.png'  },
-  // Kitchen
-  { id: 10, cat: 'kitchen',  title: 'Café Kitchen Curtain',      img: import.meta.env.BASE_URL + 'images/kitchen.png'  },
-  // Studio
-  { id: 11, cat: 'studio',   title: 'Studio Blackout Panel',     img: import.meta.env.BASE_URL + 'images/studio.png'   },
-]
-
-const filters = [
-  { slug: 'all',     label: 'All Collections' },
-  { slug: 'lounge',  label: 'Lounge Curtain'  },
-  { slug: 'bedroom', label: 'Bed Room Curtain' },
-  { slug: 'dining',  label: 'Dining Room'      },
-  { slug: 'kitchen', label: 'Kitchen'          },
-  { slug: 'studio',  label: 'Studio'           },
-]
+import { allItems, filters } from '../components/galleryData'
+import type { GalleryItem } from '../components/galleryData'
+import ImageModal from '../components/ImageModal'
 
 export default function Gallery() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -37,6 +11,7 @@ export default function Gallery() {
 
   const catParam = searchParams.get('cat') ?? 'all'
   const [active, setActive] = useState(catParam)
+  const [activeItem, setActiveItem] = useState<GalleryItem | null>(null)
 
   // Sync URL param → active filter
   useEffect(() => {
@@ -136,6 +111,16 @@ export default function Gallery() {
                 key={item.id}
                 className={`gallery-item fade-up delay-${(i % 5) + 1}`}
                 id={`gallery-item-${item.id}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`View details for ${item.title}`}
+                onClick={() => setActiveItem(item)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setActiveItem(item)
+                  }
+                }}
               >
                 <img src={item.img} alt={item.title} loading="lazy" />
                 <div className="gallery-item-overlay">
@@ -171,6 +156,8 @@ export default function Gallery() {
           </div>
         </div>
       </section>
+
+      <ImageModal item={activeItem} onClose={() => setActiveItem(null)} />
     </main>
   )
 }

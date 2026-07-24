@@ -1201,3 +1201,330 @@
 @media (max-width: 576px) {
   .gallery-masonry { columns: 2; }
 }
+
+/* ─── Work-card button reset (was an <a>, now a <button>) ─────────────── */
+button.work-card {
+  display: block;
+  width: 100%;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   IMAGE MODAL  (Flipkart-style zoom + info dialog)
+   ════════════════════════════════════════════════════════════════════════ */
+.image-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(26, 23, 20, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: imageModalFade 0.25s ease;
+}
+
+.image-modal {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  max-height: 88vh;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-hover);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  animation: imageModalIn 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─── Close button ─────────────────────────────────────────────────────── */
+.image-modal-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-dark);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.image-modal-close:hover {
+  background: var(--white);
+  transform: rotate(90deg) scale(1.05);
+}
+
+/* ─── LEFT: image stage with Flipkart-style magnifier ──────────────────── */
+.image-modal-stage {
+  position: relative;
+  background:
+    linear-gradient(45deg, #f3efe7 25%, transparent 25%) 0 0 / 24px 24px,
+    linear-gradient(-45deg, #f3efe6 25%, transparent 25%) 12px 0 / 24px 24px,
+    linear-gradient(45deg, transparent 75%, #f3efe6 75%) 0 0 / 24px 24px,
+    linear-gradient(-45deg, transparent 75%, #f3efe6 75%) 12px 0 / 24px 24px,
+    #faf7f2;
+  overflow: hidden;
+  min-height: 360px;
+  display: flex;
+}
+
+/* Magnifier wrapper fills the stage */
+.image-zoom-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* The image area the cursor moves over — clip the scaled image to this box */
+.image-zoom-container {
+  position: relative;
+  width: 100%;
+  min-height: 360px;
+  height: 100%;
+  cursor: zoom-in;
+  overflow: hidden;
+  background: #faf7f2;
+}
+.image-zoom-container.is-zoomed {
+  cursor: zoom-out;
+}
+
+.image-zoom-img {
+  width: 100%;
+  height: 100%;
+  max-height: 88vh;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  /* Smooth but snappy zoom — set transform/transformOrigin inline in JS */
+  transition: transform 0.12s ease-out;
+}
+
+/* Hint pill */
+.image-zoom-hint {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  background: rgba(26, 23, 20, 0.7);
+  backdrop-filter: blur(4px);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Zoom in / out control bar pinned to the stage */
+.image-zoom-controls {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.4rem;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.image-zoom-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.image-zoom-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: var(--white);
+}
+.image-zoom-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.image-zoom-level {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  min-width: 32px;
+  text-align: center;
+}
+
+/* ─── RIGHT: info panel ────────────────────────────────────────────────── */
+.image-modal-info {
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.image-modal-cat-badge {
+  align-self: flex-start;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--accent);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 0.9rem;
+}
+
+.image-modal-title {
+  font-size: 1.9rem;
+  line-height: 1.15;
+  color: var(--text-dark);
+  margin-bottom: 0.85rem;
+}
+
+.image-modal-desc {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-body);
+  margin-bottom: 1.5rem;
+}
+
+.image-modal-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.image-modal-fact dt {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 0.25rem;
+}
+
+.image-modal-fact dd {
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.image-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.image-modal-actions .btn {
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
+}
+
+.image-modal-foot {
+  font-size: 0.76rem;
+  color: var(--text-light);
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
+/* ─── Animations ───────────────────────────────────────────────────────── */
+@keyframes imageModalFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes imageModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .image-modal {
+    grid-template-columns: 1fr;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  .image-modal-stage {
+    min-height: 280px;
+    aspect-ratio: 4/3;
+  }
+  .image-zoom-container,
+  .image-zoom-img {
+    max-height: none;
+  }
+  .image-modal-info {
+    padding: 1.5rem 1.25rem;
+  }
+  .image-modal-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .image-modal-backdrop {
+    padding: 0;
+  }
+  .image-modal {
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
+  }
+  .image-modal-facts {
+    grid-template-columns: 1fr;
+  }
+  .image-modal-actions {
+    flex-direction: column;
+  }
+  .image-modal-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Touch devices have no hover → tap toggles zoom (handled in JS),
+   hide the "hover" hint wording since tap is the interaction there */
+@media (hover: none) {
+  .image-zoom-hint { display: none; }
+}

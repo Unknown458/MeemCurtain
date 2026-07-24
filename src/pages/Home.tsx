@@ -1,6 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/components.css'
+import ImageModal from '../components/ImageModal'
+import { findItemByImg } from '../components/galleryData'
+import type { GalleryItem } from '../components/galleryData'
 
 const WHATSAPP_NUMBER = '27000000000'
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Meem%20Curtain%2C%20I%27d%20like%20to%20inquire%20about%20your%20curtains.`
@@ -258,6 +261,11 @@ function About() {
 // ─── Recent Work ─────────────────────────────────────────────────────────
 function RecentWork() {
   const ref = useSectionAnimation()
+  const [activeItem, setActiveItem] = useState<GalleryItem | null>(null)
+
+  const openCard = (img: string) => {
+    setActiveItem(findItemByImg(img) ?? null)
+  }
 
   return (
     <section className="recent-work" ref={ref} id="recent-work">
@@ -274,10 +282,14 @@ function RecentWork() {
 
         <div className="recent-work-grid">
           {recentWork.map((item, i) => (
-            <Link to={`/meemcurtain/gallery?cat=${item.cat.toLowerCase()}`}
+            <button
+              type="button"
               key={item.id}
               className={`work-card fade-up delay-${i + 1}`}
-              id={`work-card-${item.id}`}>
+              id={`work-card-${item.id}`}
+              aria-label={`View details for ${item.title}`}
+              onClick={() => openCard(item.img)}
+            >
               <img src={item.img} alt={item.title} loading="lazy" />
               <div className="work-card-overlay">
                 <div className="work-card-info">
@@ -285,10 +297,12 @@ function RecentWork() {
                   <span>{item.cat}</span>
                 </div>
               </div>
-            </Link>
+            </button>
           ))}
         </div>
       </div>
+
+      <ImageModal item={activeItem} onClose={() => setActiveItem(null)} />
     </section>
   )
 }
