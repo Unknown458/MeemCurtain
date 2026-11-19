@@ -35,7 +35,7 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <BrowserRouter basename="/meemcurtain/">
+    <BrowserRouter>
       <AppLayout />
     </BrowserRouter>
   )

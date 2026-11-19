@@ -183,7 +183,7 @@ function Categories() {
 
           {/* Other 4 cards */}
           {rest.map((cat, i) => (
-            <Link to={`/meemcurtain/gallery?cat=${cat.slug}`}
+            <Link to={`/gallery?cat=${cat.slug}`}
               key={cat.slug}
               className={`category-card fade-up delay-${i + 2}`}>
               <img src={cat.image} alt={cat.title} loading="lazy" />
