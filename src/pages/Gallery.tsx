@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
+import { CONTACT_INFO } from '../constants/contact'
 import '../styles/components.css'
 import { allItems, filters } from '../components/galleryData'
 import type { GalleryItem } from '../components/galleryData'
@@ -147,7 +148,7 @@ export default function Gallery() {
               <Link to="/contact" className="btn btn-primary" id="gallery-cta-contact">
                 Send Inquiry
               </Link>
-              <a href={`https://wa.me/27000000000?text=Hi%20Meem%20Curtain%2C%20I%20saw%20your%20gallery%20and%20would%20love%20a%20quote!`}
+              <a href={`https://wa.me/${CONTACT_INFO.whatsappNumber}?text=Hi%20Meem%20Curtain%2C%20I%20saw%20your%20gallery%20and%20would%20love%20a%20quote!`}
                 target="_blank" rel="noopener noreferrer"
                 className="btn btn-outline-dark" id="gallery-cta-wa">
                 💬 WhatsApp Quote

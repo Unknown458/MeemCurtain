@@ -1,12 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
+import { CONTACT_INFO } from '../constants/contact'
 import type { GalleryItem } from './galleryData'
 import { filters } from './galleryData'
 import ImageZoom from './ImageZoom'
 import '../styles/components.css'
-
-const WHATSAPP_NUMBER = '27000000000'
 
 type Props = {
   item: GalleryItem | null
@@ -106,7 +105,7 @@ export default function ImageModal({ item, onClose }: Props) {
 
           <div className="image-modal-actions">
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${waText}`}
+              href={`https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${waText}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary"

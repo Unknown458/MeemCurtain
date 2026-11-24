@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import type { FormEvent } from 'react'
+import { CONTACT_INFO } from '../constants/contact'
 import '../styles/components.css'
-
-const WHATSAPP_NUMBER = '27000000000'
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Meem%20Curtain%2C%20I%27d%20like%20to%20inquire%20about%20your%20curtains.`
 
 function useSectionAnimation() {
   const ref = useRef<HTMLDivElement>(null)
@@ -63,7 +61,7 @@ ${formData.message}`
     setTimeout(() => {
       setSending(false)
       setSubmitted(true)
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank')
+      window.open(`https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${msg}`, '_blank')
     }, 800)
   }
 
@@ -98,7 +96,7 @@ ${formData.message}`
 
               <div className="contact-channels">
                 {/* WhatsApp */}
-                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
+                <a href={CONTACT_INFO.whatsappUrl} target="_blank" rel="noopener noreferrer"
                   className="contact-channel" id="contact-wa-link">
                   <div className="channel-icon whatsapp">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
@@ -107,12 +105,26 @@ ${formData.message}`
                   </div>
                   <div className="channel-info">
                     <h4>WhatsApp (Fastest Response)</h4>
-                    <span>Tap to open WhatsApp chat →</span>
+                    <span>{CONTACT_INFO.whatsappDisplay} · Tap to chat →</span>
+                  </div>
+                </a>
+
+                {/* Landline Phone */}
+                <a href={CONTACT_INFO.landlineTel} className="contact-channel" id="contact-landline-link">
+                  <div className="channel-icon phone">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                  </div>
+                  <div className="channel-info">
+                    <h4>Landline Phone</h4>
+                    <span>{CONTACT_INFO.landlineDisplay} · Call now →</span>
                   </div>
                 </a>
 
                 {/* Email */}
-                <a href="mailto:info@meemcurtain.co.za" className="contact-channel" id="contact-email-link">
+                <a href={CONTACT_INFO.emailMailto} className="contact-channel" id="contact-email-link">
                   <div className="channel-icon email">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="2">
@@ -122,7 +134,7 @@ ${formData.message}`
                   </div>
                   <div className="channel-info">
                     <h4>Email Us</h4>
-                    <span>info@meemcurtain.co.za</span>
+                    <span>{CONTACT_INFO.email}</span>
                   </div>
                 </a>
               </div>
@@ -134,31 +146,27 @@ ${formData.message}`
                   Follow Us
                 </h3>
                 <div className="social-channels">
-                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-                    className="social-channel-btn facebook" id="contact-fb-btn">
+                  <a href={CONTACT_INFO.facebookUrl} target="_blank" rel="noopener noreferrer"
+                    className="social-channel-btn facebook" id="contact-fb-btn"
+                    title={`Facebook: ${CONTACT_INFO.facebookName}`}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                     </svg>
-                    Facebook
+                    Facebook: {CONTACT_INFO.facebookName}
                   </a>
-                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                    className="social-channel-btn instagram" id="contact-ig-btn">
+                  <a href={CONTACT_INFO.instagramUrl} target="_blank" rel="noopener noreferrer"
+                    className="social-channel-btn instagram" id="contact-ig-btn"
+                    title={`Instagram: ${CONTACT_INFO.instagramDisplay}`}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="2">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                       <circle cx="12" cy="12" r="4"/>
                     </svg>
-                    Instagram
+                    Instagram: {CONTACT_INFO.instagramDisplay}
                   </a>
-                  <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer"
-                    className="social-channel-btn tiktok" id="contact-tt-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.98a8.27 8.27 0 004.84 1.55V7.07a4.85 4.85 0 01-1.07-.38z"/>
-                    </svg>
-                    TikTok
-                  </a>
-                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                    className="social-channel-btn whatsapp-btn" id="contact-wa-social-btn">
+                  <a href={CONTACT_INFO.whatsappUrl} target="_blank" rel="noopener noreferrer"
+                    className="social-channel-btn whatsapp-btn" id="contact-wa-social-btn"
+                    title={`WhatsApp: ${CONTACT_INFO.whatsappDisplay}`}>
                     WhatsApp
                   </a>
                 </div>
