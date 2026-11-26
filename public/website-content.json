@@ -1,0 +1,36 @@
+{
+  "websiteId": 1,
+  "websiteCode": "meemcurtain",
+  "websiteName": "Meem Curtain",
+  "generatedAt": "2026-11-25T03:59:18.2487986Z",
+  "contents": [
+    {
+      "contentId": 1,
+      "contentType": "Product",
+      "category": "Curtains",
+      "title": "Classic Premium Lounge Drape",
+      "shortDescription": "Premium luxury beige lounge curtains",
+      "description": "Elegant floor-to-ceiling curtains with premium fabric and modern design.",
+      "price": 2800.0,
+      "currency": "ZAR",
+      "warranty": "3 Years",
+      "customFields": {
+        "fabric": "Premium Polyester",
+        "room": "Lounge / Living Room",
+        "care": "Gentle machine wash"
+      },
+      "displayOrder": 1,
+      "media": [
+        {
+          "mediaId": 1,
+          "mediaType": 1,
+          "mediaPath": "/images/6f5548d3e7854c04852742365d2c1b54.png",
+          "imageDescription": "Classic Premium Lounge Drape - Main Product Image",
+          "altText": "Premium beige lounge curtains",
+          "isPrimary": true,
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

@@ -2,18 +2,35 @@
 // Single source of truth for gallery items, filters, and recent-work lookups
 // so that the Gallery page, Home page, and ImageModal all stay in sync.
 
-export type Cat = 'lounge' | 'bedroom' | 'dining' | 'kitchen' | 'studio'
+export type Cat = 'lounge' | 'bedroom' | 'dining' | 'kitchen' | 'studio' | string
+
+export type GalleryMedia = {
+  mediaId: number
+  mediaType: number
+  mediaPath: string
+  imageDescription?: string
+  altText?: string
+  isPrimary?: boolean
+  displayOrder?: number
+}
 
 export type GalleryItem = {
   id: number
   cat: Cat
+  category?: string
   title: string
   img: string
+  shortDescription?: string
   description: string
+  price?: number
+  currency?: string
+  warranty?: string
   fabric: string
   room: string
   light: string
   care: string
+  customFields?: Record<string, string>
+  media?: GalleryMedia[]
 }
 
 const base = import.meta.env.BASE_URL + 'images/'

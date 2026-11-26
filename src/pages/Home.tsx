@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 import { CONTACT_INFO } from '../constants/contact'
 import '../styles/components.css'
 import ImageModal from '../components/ImageModal'
-import { findItemByImg } from '../components/galleryData'
 import type { GalleryItem } from '../components/galleryData'
+import { fetchWebsiteContent, mapContentToGalleryItem } from '../services/websiteContent'
 
 // ─── Curtain image data ────────────────────────────────────────────────────
 const categories = [
@@ -41,13 +41,6 @@ const categories = [
   },
 ]
 
-const recentWork = [
-  { id: 1, title: 'Modern Lounge', cat: 'Lounge', img: import.meta.env.BASE_URL + 'images/lounge.png' },
-  { id: 2, title: 'Master Bedroom', cat: 'Bedroom', img: import.meta.env.BASE_URL + 'images/bedroom.png' },
-  { id: 3, title: 'Elegant Dining', cat: 'Dining', img: import.meta.env.BASE_URL + 'images/dining.png' },
-  { id: 4, title: 'Studio Setup', cat: 'Studio', img: import.meta.env.BASE_URL + 'images/studio.png' },
-]
-
 const features = [
   { icon: '✦', text: 'Custom Made to Measure' },
   { icon: '✦', text: 'Premium Fabric Selection' },
@@ -56,26 +49,32 @@ const features = [
 ]
 
 // ─── Scroll-animation hook (inline so Home is self-contained) ─────────────
-function useSectionAnimation() {
+function useSectionAnimation(deps: any[] = []) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) e.target.classList.add('visible')
         })
       },
-      { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
     )
-    const el = ref.current
-    if (el) {
-      el.querySelectorAll('.fade-up,.fade-left,.fade-right').forEach((node) =>
-        observer.observe(node)
-      )
-    }
+
+    el.querySelectorAll('.fade-up,.fade-left,.fade-right').forEach((node) => {
+      const rect = node.getBoundingClientRect()
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        node.classList.add('visible')
+      }
+      observer.observe(node)
+    })
+
     return () => observer.disconnect()
-  }, [])
+  }, deps)
 
   return ref
 }
@@ -258,12 +257,34 @@ function About() {
 
 // ─── Recent Work ─────────────────────────────────────────────────────────
 function RecentWork() {
-  const ref = useSectionAnimation()
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null)
+  const [apiItems, setApiItems] = useState<GalleryItem[]>([])
+  const [loaded, setLoaded] = useState(false)
 
-  const openCard = (img: string) => {
-    setActiveItem(findItemByImg(img) ?? null)
+  const ref = useSectionAnimation([loaded, apiItems.length])
+
+  useEffect(() => {
+    fetchWebsiteContent()
+      .then((data) => {
+        const mapped = (data.contents || []).map(mapContentToGalleryItem)
+        setApiItems(mapped)
+      })
+      .catch(() => {
+        setApiItems([])
+      })
+      .finally(() => setLoaded(true))
+  }, [])
+
+  const openCard = (item: GalleryItem) => {
+    setActiveItem(item)
   }
+
+  // Only show what the JSON gives — no static fallback images
+  if (loaded && apiItems.length === 0) {
+    return null
+  }
+
+  const displayItems = apiItems.slice(0, 8)
 
   return (
     <section className="recent-work" ref={ref} id="recent-work">
@@ -279,24 +300,35 @@ function RecentWork() {
         </div>
 
         <div className="recent-work-grid">
-          {recentWork.map((item, i) => (
-            <button
-              type="button"
-              key={item.id}
-              className={`work-card fade-up delay-${i + 1}`}
-              id={`work-card-${item.id}`}
-              aria-label={`View details for ${item.title}`}
-              onClick={() => openCard(item.img)}
-            >
-              <img src={item.img} alt={item.title} loading="lazy" />
-              <div className="work-card-overlay">
-                <div className="work-card-info">
-                  <h4>{item.title}</h4>
-                  <span>{item.cat}</span>
+          {!loaded ? (
+            <div className="gallery-skeleton-card" style={{ height: '340px', maxWidth: '320px', borderRadius: 'var(--radius-lg)' }} />
+          ) : (
+            displayItems.map((item, i) => (
+              <button
+                type="button"
+                key={item.id}
+                className={`work-card fade-up visible delay-${(i % 4) + 1}`}
+                id={`work-card-${item.id}`}
+                aria-label={`View details for ${item.title}`}
+                onClick={() => openCard(item)}
+              >
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  loading="lazy"
+                  onError={(e) => {
+                    ;(e.target as HTMLImageElement).src = '/images/lounge.png'
+                  }}
+                />
+                <div className="work-card-overlay">
+                  <div className="work-card-info">
+                    <h4>{item.title}</h4>
+                    <span>{item.category ?? item.room ?? item.cat}</span>
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))
+          )}
         </div>
       </div>
 

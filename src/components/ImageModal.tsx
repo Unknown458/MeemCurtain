@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { CONTACT_INFO } from '../constants/contact'
@@ -14,8 +14,16 @@ type Props = {
 
 export default function ImageModal({ item, onClose }: Props) {
   const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const [selectedImg, setSelectedImg] = useState<string>('')
 
   const open = item !== null
+
+  // Keep selected image in sync when item changes
+  useEffect(() => {
+    if (item) {
+      setSelectedImg(item.img)
+    }
+  }, [item])
 
   // ─── Lifecycle: Esc to close, body scroll lock, focus close button ────────
   useEffect(() => {
@@ -40,10 +48,19 @@ export default function ImageModal({ item, onClose }: Props) {
 
   if (!open || !item) return null
 
-  const catLabel = filters.find((f) => f.slug === item.cat)?.label ?? item.cat
+  const catLabel =
+    filters.find((f) => f.slug === item.cat)?.label ?? item.category ?? item.room ?? item.cat
+
+  const priceFormatted =
+    typeof item.price === 'number'
+      ? `${item.currency === 'ZAR' ? 'R ' : (item.currency ? `${item.currency} ` : 'R ')}${item.price.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      : null
+
   const waText = encodeURIComponent(
-    `Hi Meem Curtain, I'm interested in the "${item.title}" (${catLabel}) from your gallery. Could you share a quote?`
+    `Hi Meem Curtain, I'm interested in the "${item.title}" (${priceFormatted ? `${priceFormatted} · ` : ''}${catLabel}) from your gallery. Could you share more details?`
   )
+
+  const mediaList = item.media && item.media.length > 0 ? item.media : []
 
   return createPortal(
     <div
@@ -72,35 +89,76 @@ export default function ImageModal({ item, onClose }: Props) {
           </svg>
         </button>
 
-        {/* ─── LEFT: image stage with Flipkart-style magnifier ─────────── */}
+        {/* ─── LEFT: image stage with magnifier ─────────── */}
         <div className="image-modal-stage">
-          <ImageZoom src={item.img} alt={item.title} />
+          <ImageZoom src={selectedImg || item.img} alt={item.title} />
+
+          {/* Multiple image thumbnails if product has > 1 images */}
+          {mediaList.length > 1 && (
+            <div className="image-modal-thumbs">
+              {mediaList.map((m, idx) => (
+                <button
+                  type="button"
+                  key={m.mediaId || idx}
+                  className={`image-modal-thumb${(selectedImg || item.img) === m.mediaPath ? ' active' : ''}`}
+                  onClick={() => setSelectedImg(m.mediaPath)}
+                  title={m.imageDescription || `Image ${idx + 1}`}
+                >
+                  <img src={m.mediaPath} alt={m.altText || item.title} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ─── RIGHT: info panel ────────────────────────────────────────── */}
         <div className="image-modal-info">
-          <span className="image-modal-cat-badge">{catLabel}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+            <span className="image-modal-cat-badge">{catLabel}</span>
+            {item.warranty && (
+              <span className="image-modal-warranty">🛡️ {item.warranty} Warranty</span>
+            )}
+          </div>
+
           <h2 className="image-modal-title">{item.title}</h2>
+
+          {priceFormatted && (
+            <div className="image-modal-price-box">
+              <span className="image-modal-price">{priceFormatted}</span>
+            </div>
+          )}
+
+          {item.shortDescription && item.shortDescription !== item.description && (
+            <p className="image-modal-short-desc">{item.shortDescription}</p>
+          )}
 
           <p className="image-modal-desc">{item.description}</p>
 
           <dl className="image-modal-facts">
-            <div className="image-modal-fact">
-              <dt>Fabric</dt>
-              <dd>{item.fabric}</dd>
-            </div>
-            <div className="image-modal-fact">
-              <dt>Room</dt>
-              <dd>{item.room}</dd>
-            </div>
-            <div className="image-modal-fact">
-              <dt>Light</dt>
-              <dd>{item.light}</dd>
-            </div>
-            <div className="image-modal-fact">
-              <dt>Care</dt>
-              <dd>{item.care}</dd>
-            </div>
+            {item.fabric && (
+              <div className="image-modal-fact">
+                <dt>Fabric</dt>
+                <dd>{item.fabric}</dd>
+              </div>
+            )}
+            {item.room && (
+              <div className="image-modal-fact">
+                <dt>Room</dt>
+                <dd>{item.room}</dd>
+              </div>
+            )}
+            {item.light && (
+              <div className="image-modal-fact">
+                <dt>Light</dt>
+                <dd>{item.light}</dd>
+              </div>
+            )}
+            {item.care && (
+              <div className="image-modal-fact">
+                <dt>Care</dt>
+                <dd>{item.care}</dd>
+              </div>
+            )}
           </dl>
 
           <div className="image-modal-actions">

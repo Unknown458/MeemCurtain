@@ -522,7 +522,7 @@
 
 .recent-work-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.25rem;
 }
 
@@ -533,6 +533,8 @@
   aspect-ratio: 3/4;
   cursor: pointer;
   background: var(--bg-dark);
+  max-width: 360px;
+  width: 100%;
 }
 
 .work-card img {
@@ -1110,16 +1112,91 @@
   padding: 6rem 0;
 }
 
+.gallery-filter-wrap {
+  margin-bottom: 3rem;
+}
+
 .gallery-filter {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-  margin-bottom: 3rem;
-  padding-bottom: 1.5rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
 }
 
+/* Sub-category row — slightly smaller, indented, gold tones */
+.gallery-subfilter {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 0 0.5rem 0.25rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--border);
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.subfilter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.subfilter-btn:hover {
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.subfilter-btn.active {
+  background: rgba(139, 105, 20, 0.12);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+  margin-left: 0.3rem;
+}
+
+.filter-btn.active .filter-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.subfilter-btn.active .filter-count {
+  background: var(--primary);
+  color: white;
+}
+
 .filter-btn {
+  display: inline-flex;
+  align-items: center;
   padding: 0.6rem 1.5rem;
   font-size: 0.7rem;
   font-weight: 600;
@@ -1171,19 +1248,23 @@
 .gallery-item-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(26, 23, 20, 0.6);
+  background: rgba(26, 23, 20, 0.62);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.4rem;
   opacity: 0;
   transition: opacity 0.4s ease;
+  padding: 1rem;
 }
 
 .gallery-item:hover .gallery-item-overlay {
   opacity: 1;
 }
 
-.gallery-item-overlay span {
+/* Legacy span fallback */
+.gallery-item-overlay > span:not(.gallery-overlay-title):not(.gallery-card-price):not(.gallery-card-sub) {
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -1192,6 +1273,17 @@
   padding: 0.6rem 1.25rem;
   border: 1.5px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius);
+}
+
+.gallery-card-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
 }
 
 @media (max-width: 900px) {
@@ -1527,4 +1619,115 @@ button.work-card {
    hide the "hover" hint wording since tap is the interaction there */
 @media (hover: none) {
   .image-zoom-hint { display: none; }
+}
+
+/* ─── Dynamic Content & ImageModal Enhancements ────────────────────────── */
+.image-modal-price-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.image-modal-price {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.image-modal-warranty {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1b5e20;
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.image-modal-short-desc {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.4rem;
+}
+
+.image-modal-thumbs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.25rem 0;
+  overflow-x: auto;
+}
+
+.image-modal-thumb {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.65;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+}
+
+.image-modal-thumb.active,
+.image-modal-thumb:hover {
+  border-color: var(--primary);
+  opacity: 1;
+}
+
+.image-modal-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-overlay-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: white;
+  text-align: center;
+  padding: 0 0.5rem;
+}
+
+.gallery-card-price {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffda79;
+  letter-spacing: 0.05em;
+  margin-top: 0.35rem;
+}
+
+.gallery-skeleton-card {
+  border-radius: var(--radius-lg);
+  background: #eae5df;
+  margin-bottom: 1.25rem;
+  break-inside: avoid;
+  animation: skeletonPulse 1.6s infinite ease-in-out;
+}
+
+@keyframes skeletonPulse {
+  0% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0.45; }
+}
+
+.gallery-empty-state {
+  text-align: center;
+  padding: 4.5rem 1.5rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border);
+  margin: 2rem 0;
 }
