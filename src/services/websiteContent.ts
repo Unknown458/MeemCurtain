@@ -1,3 +1,4 @@
+import { isVideoMedia } from '../components/galleryData'
 import type { GalleryItem, GalleryMedia } from '../components/galleryData'
 
 export interface ContentMedia {
@@ -81,19 +82,24 @@ export function deriveCategorySlug(category?: string, room?: string): string {
  * Maps an API ContentItem to the GalleryItem model used by Gallery & ImageModal
  */
 export function mapContentToGalleryItem(item: ContentItem): GalleryItem {
-  const mediaList: GalleryMedia[] = (item.media || []).map((m) => ({
-    mediaId: m.mediaId,
-    mediaType: m.mediaType,
-    mediaPath: resolveMediaUrl(m.mediaPath),
-    imageDescription: m.imageDescription,
-    altText: m.altText,
-    isPrimary: m.isPrimary,
-    displayOrder: m.displayOrder,
-  }))
+  const mediaList: GalleryMedia[] = (item.media || [])
+    .map((m) => ({
+      mediaId: m.mediaId,
+      mediaType: m.mediaType,
+      mediaPath: resolveMediaUrl(m.mediaPath),
+      imageDescription: m.imageDescription,
+      altText: m.altText,
+      isPrimary: m.isPrimary,
+      displayOrder: m.displayOrder,
+    }))
+    .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
 
-  // Primary image
-  const primary = mediaList.find((m) => m.isPrimary) || mediaList[0]
-  const imgUrl = primary ? primary.mediaPath : '/images/lounge.png'
+  // `img` must always be a real image URL (used by <img> thumbnails).
+  // Prefer the primary image, then any image, and only fall back to a
+  // placeholder when the item has no image media at all.
+  const primaryMedia = mediaList.find((m) => m.isPrimary) || mediaList[0]
+  const primaryImage = mediaList.find((m) => !isVideoMedia(m))
+  const imgUrl = primaryImage?.mediaPath || (isVideoMedia(primaryMedia) ? '' : primaryMedia?.mediaPath) || '/images/lounge.png'
 
   const catSlug = deriveCategorySlug(item.category, item.customFields?.room)
 
@@ -114,6 +120,7 @@ export function mapContentToGalleryItem(item: ContentItem): GalleryItem {
     light: item.customFields?.light || 'Light filtering',
     customFields: item.customFields as Record<string, string> | undefined,
     media: mediaList,
+    displayOrder: item.displayOrder,
   }
 }
 
@@ -205,24 +212,25 @@ export function buildCategoryTree(items: Array<{
 }
 
 /**
- * Fetches website content JSON from /website-content.json with fallback to live domain
+ * Use the same-origin feed. Vite proxies this path to the live site in dev;
+ * production serves the current generated feed from the website origin.
  */
 export async function fetchWebsiteContent(): Promise<WebsiteData> {
-  const endpoint = '/website-content.json'
-
   try {
-    const res = await fetch(endpoint, { cache: 'no-cache' })
+    const res = await fetch('/website-content.json', { cache: 'no-store' })
     if (res.ok) {
       return (await res.json()) as WebsiteData
     }
-  } catch (err) {
-    console.warn('Could not fetch from /website-content.json, attempting live domain fallback:', err)
+    throw new Error(`Website content request failed: ${res.status}`)
+  } catch (sameOriginError) {
+    console.warn('Same-origin website content request failed; trying live feed:', sameOriginError)
   }
 
-  // Fallback to full URL
-  const fallbackRes = await fetch('https://www.meemcurtain.co.za/website-content.json')
-  if (!fallbackRes.ok) {
-    throw new Error(`Failed to load website content: ${fallbackRes.statusText}`)
+  const liveRes = await fetch(`${CONTENT_BASE_URL}/website-content.json`, {
+    cache: 'no-store',
+  })
+  if (!liveRes.ok) {
+    throw new Error(`Failed to load website content: ${liveRes.statusText}`)
   }
-  return (await fallbackRes.json()) as WebsiteData
+  return (await liveRes.json()) as WebsiteData
 }

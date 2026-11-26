@@ -4,6 +4,7 @@ import { CONTACT_INFO } from '../constants/contact'
 import '../styles/components.css'
 import type { GalleryItem } from '../components/galleryData'
 import ImageModal from '../components/ImageModal'
+import MediaThumb from '../components/MediaThumb'
 import {
   fetchWebsiteContent,
   mapContentToGalleryItem,
@@ -31,7 +32,17 @@ export default function Gallery() {
     setError(null)
     try {
       const data = await fetchWebsiteContent()
-      const mapped = (data.contents || []).map(mapContentToGalleryItem)
+      const mapped = (data.contents || [])
+        .map((content, sourceIndex) => ({
+          item: mapContentToGalleryItem(content),
+          sourceIndex,
+        }))
+        .sort((a, b) =>
+          (a.item.displayOrder ?? Number.MAX_SAFE_INTEGER) -
+            (b.item.displayOrder ?? Number.MAX_SAFE_INTEGER) ||
+          a.sourceIndex - b.sourceIndex
+        )
+        .map(({ item }) => item)
       setItems(mapped)
     } catch (err) {
       console.error('Failed to load gallery:', err)
@@ -263,14 +274,7 @@ export default function Gallery() {
                     }
                   }}
                 >
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    loading="lazy"
-                    onError={(e) => {
-                      ;(e.target as HTMLImageElement).src = '/images/lounge.png'
-                    }}
-                  />
+                  <MediaThumb item={item} />
                   <div className="gallery-item-overlay">
                     <span className="gallery-overlay-title">{item.title}</span>
                     {/* Show subcategory badge on card */}

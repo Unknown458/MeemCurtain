@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { CONTACT_INFO } from '../constants/contact'
-import type { GalleryItem } from './galleryData'
-import { filters } from './galleryData'
+import type { GalleryItem, GalleryMedia } from './galleryData'
+import { filters, getPrimaryMedia, isVideoMedia } from './galleryData'
 import ImageZoom from './ImageZoom'
+import VideoPlayer from './VideoPlayer'
 import '../styles/components.css'
 
 type Props = {
@@ -14,14 +15,14 @@ type Props = {
 
 export default function ImageModal({ item, onClose }: Props) {
   const closeBtnRef = useRef<HTMLButtonElement>(null)
-  const [selectedImg, setSelectedImg] = useState<string>('')
+  const [selectedMedia, setSelectedMedia] = useState<GalleryMedia | null>(null)
 
   const open = item !== null
 
-  // Keep selected image in sync when item changes
+  // Keep the selected media in sync when item changes
   useEffect(() => {
     if (item) {
-      setSelectedImg(item.img)
+      setSelectedMedia(getPrimaryMedia(item) || null)
     }
   }, [item])
 
@@ -62,6 +63,9 @@ export default function ImageModal({ item, onClose }: Props) {
 
   const mediaList = item.media && item.media.length > 0 ? item.media : []
 
+  const activeKey = selectedMedia?.mediaId ?? selectedMedia?.mediaPath
+  const selectedIsVideo = isVideoMedia(selectedMedia)
+
   return createPortal(
     <div
       className="image-modal-backdrop"
@@ -89,24 +93,42 @@ export default function ImageModal({ item, onClose }: Props) {
           </svg>
         </button>
 
-        {/* ─── LEFT: image stage with magnifier ─────────── */}
-        <div className="image-modal-stage">
-          <ImageZoom src={selectedImg || item.img} alt={item.title} />
+        {/* ─── LEFT: media stage (video player or image magnifier) ──────── */}
+        <div className={`image-modal-stage${selectedIsVideo ? ' is-video' : ''}`}>
+          {selectedIsVideo ? (
+            <VideoPlayer
+              key={selectedMedia?.mediaPath}
+              src={selectedMedia?.mediaPath || ''}
+              alt={item.title}
+            />
+          ) : (
+            <ImageZoom src={selectedMedia?.mediaPath || item.img} alt={item.title} />
+          )}
 
-          {/* Multiple image thumbnails if product has > 1 images */}
+          {/* Thumbnails when a product has more than one media item */}
           {mediaList.length > 1 && (
             <div className="image-modal-thumbs">
-              {mediaList.map((m, idx) => (
-                <button
-                  type="button"
-                  key={m.mediaId || idx}
-                  className={`image-modal-thumb${(selectedImg || item.img) === m.mediaPath ? ' active' : ''}`}
-                  onClick={() => setSelectedImg(m.mediaPath)}
-                  title={m.imageDescription || `Image ${idx + 1}`}
-                >
-                  <img src={m.mediaPath} alt={m.altText || item.title} />
-                </button>
-              ))}
+              {mediaList.map((m, idx) => {
+                const key = m.mediaId ?? m.mediaPath
+                return (
+                  <button
+                    type="button"
+                    key={key || idx}
+                    className={`image-modal-thumb${activeKey === key ? ' active' : ''}`}
+                    onClick={() => setSelectedMedia(m)}
+                    title={m.imageDescription || `Media ${idx + 1}`}
+                  >
+                    {isVideoMedia(m) ? (
+                      <>
+                        <video src={m.mediaPath} muted playsInline preload="metadata" />
+                        <span className="image-modal-thumb-badge">▶</span>
+                      </>
+                    ) : (
+                      <img src={m.mediaPath} alt={m.altText || item.title} />
+                    )}
+                  </button>
+                )
+              })}
             </div>
           )}
         </div>

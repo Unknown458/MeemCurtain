@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { CONTACT_INFO } from '../constants/contact'
 import '../styles/components.css'
 import ImageModal from '../components/ImageModal'
+import MediaThumb from '../components/MediaThumb'
 import type { GalleryItem } from '../components/galleryData'
 import { fetchWebsiteContent, mapContentToGalleryItem } from '../services/websiteContent'
 
@@ -266,7 +267,17 @@ function RecentWork() {
   useEffect(() => {
     fetchWebsiteContent()
       .then((data) => {
-        const mapped = (data.contents || []).map(mapContentToGalleryItem)
+        const mapped = (data.contents || [])
+          .map((content, sourceIndex) => ({
+            item: mapContentToGalleryItem(content),
+            sourceIndex,
+          }))
+          .sort((a, b) =>
+            (a.item.displayOrder ?? Number.MAX_SAFE_INTEGER) -
+              (b.item.displayOrder ?? Number.MAX_SAFE_INTEGER) ||
+            a.sourceIndex - b.sourceIndex
+          )
+          .map(({ item }) => item)
         setApiItems(mapped)
       })
       .catch(() => {
@@ -312,14 +323,7 @@ function RecentWork() {
                 aria-label={`View details for ${item.title}`}
                 onClick={() => openCard(item)}
               >
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  loading="lazy"
-                  onError={(e) => {
-                    ;(e.target as HTMLImageElement).src = '/images/lounge.png'
-                  }}
-                />
+                <MediaThumb item={item} />
                 <div className="work-card-overlay">
                   <div className="work-card-info">
                     <h4>{item.title}</h4>

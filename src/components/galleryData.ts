@@ -6,7 +6,7 @@ export type Cat = 'lounge' | 'bedroom' | 'dining' | 'kitchen' | 'studio' | strin
 
 export type GalleryMedia = {
   mediaId: number
-  mediaType: number
+  mediaType: number | string
   mediaPath: string
   imageDescription?: string
   altText?: string
@@ -31,6 +31,25 @@ export type GalleryItem = {
   care: string
   customFields?: Record<string, string>
   media?: GalleryMedia[]
+  displayOrder?: number
+}
+
+// The API marks videos with mediaType 2 and images with mediaType 1.
+export const VIDEO_MEDIA_TYPE = 2
+
+// Detects a video either by the API mediaType or by its file extension.
+export function isVideoMedia(
+  media?: { mediaType?: number | string; mediaPath?: string } | null
+): boolean {
+  if (!media) return false
+  if (Number(media.mediaType) === VIDEO_MEDIA_TYPE) return true
+  return /\.(mp4|webm|ogv|ogg|mov|m4v)(\?.*)?$/i.test(media.mediaPath || '')
+}
+
+// Returns the primary media (flagged isPrimary, else the first entry).
+export function getPrimaryMedia(item: GalleryItem): GalleryMedia | undefined {
+  const list = item.media || []
+  return list.find((m) => m.isPrimary) || list[0]
 }
 
 const base = import.meta.env.BASE_URL + 'images/'
